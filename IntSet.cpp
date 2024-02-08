@@ -171,17 +171,21 @@ void IntSet::DumpData(ostream& out) const
 IntSet IntSet::unionWith(const IntSet& otherIntSet) const
 {
    IntSet together(*this); 
-   together.resize(used + otherIntSet.used);
-   for (int i = 0; i < otherIntSet.used + used; i++) {
-      together.data[i + used] = otherIntSet.data[i];
+   
+   for (int i = 0; i < otherIntSet.used; i++) {
+      together.add(otherIntSet.data[i]);
    }
    return together;
 }
 
 IntSet IntSet::intersect(const IntSet& otherIntSet) const
 {
-   cout << "intersect() is not implemented yet..." << endl;
-   return IntSet(); // dummy IntSet object returned
+   IntSet intersection(*this);
+   for (int i = 0; i < used; i++) {
+      if (!otherIntSet.contains(this->data[i])) { intersection.remove(this->data[i]); }
+   }
+   
+   return intersection; 
 }
 
 IntSet IntSet::subtract(const IntSet& otherIntSet) const
@@ -190,9 +194,7 @@ IntSet IntSet::subtract(const IntSet& otherIntSet) const
    for (int i = 0; i < otherIntSet.used; i++) {
       difference.remove(otherIntSet.data[i]);
    }
-   for (int i = 0; i < difference.used; i++){
-      cout << difference.data[i] << endl;
-   }
+
    return difference;
 }
 
@@ -232,6 +234,5 @@ bool IntSet::remove(int anInt)
 
 bool operator==(const IntSet& is1, const IntSet& is2)
 {
-   cout << "operator==() is not implemented yet..." << endl;
-   return false; // dummy value returned
+   return (is1.isSubsetOf(is2) && is2.isSubsetOf(is1));
 }
